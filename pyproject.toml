@@ -36,12 +36,13 @@ disallow_incomplete_defs = true
 disallow_untyped_defs = true
 ignore_missing_imports = true
 no_implicit_optional = true
+plugins = "sqlalchemy.ext.mypy.plugin"
 
 [tool.pytest]
 addopts = "--cov=app --cov-fail-under=60"
 python_files = "test_*.py"
 python_classes = ["*Test", "Test*"]
-python_functions = "test__*"
+python_functions = "test_*"
 
 [tool.pylint.master]
 extension-pkg-allow-list = ["pydantic"]
