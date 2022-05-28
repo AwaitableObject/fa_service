@@ -1,8 +1,8 @@
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import text
 
+from app.adapters.repository import SqlAlchemyRepository
 from app.domain.models import Batch
-from app.repository import SqlAlchemyRepository
 from tests.integration.utils import insert_allocation, insert_batch, insert_order_line
 
 

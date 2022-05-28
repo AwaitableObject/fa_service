@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, clear_mappers, sessionmaker
 
-from app.orm import metadata, start_mappers
+from app.adapters.orm import metadata, start_mappers
 
 
 @pytest.fixture

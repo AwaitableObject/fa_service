@@ -6,7 +6,7 @@ from sqlalchemy.orm.session import Session
 from app.domain.models import Batch
 
 
-class AbstractRepository(ABC):
+class AbstractRepository(ABC):  # pragma: no cover
     @abstractmethod
     def add(self, batch: Batch) -> None:
         raise NotImplementedError
