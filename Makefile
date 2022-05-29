@@ -19,3 +19,12 @@ lint: ## Lint code
 format: ## Format all files
 	isort $(CODE)
 	black $(CODE)
+
+run: ## Run API
+	uvicorn app.main:app --reload
+
+makemigrations: ## Create migrations
+	alembic revision --autogenerate
+
+migrate: ## Apply migrations
+	alembic upgrade head
