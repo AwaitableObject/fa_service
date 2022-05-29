@@ -1,5 +1,15 @@
 version: "3.8"
 services:
+  app:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      depends_on:
+        - db
+      volumes:
+        - ./:/service
+      ports:
+        - "8000:8000"
   db:
     image: "postgres:latest"
     env_file:
