@@ -2,7 +2,18 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from typing import Optional, Set
+from typing import List, Optional, Set
+
+from app.domain.exceptions import OutOfStock
+
+
+def allocate(line: OrderLine, batches: List[Batch]) -> str:
+    try:
+        batch = next(b for b in sorted(batches) if b.can_allocate(line))
+        batch.allocate(line)
+        return batch.reference
+    except StopIteration as e:
+        raise OutOfStock(f"Out of stock for sku {line.sku}") from e
 
 
 @dataclass(unsafe_hash=True)

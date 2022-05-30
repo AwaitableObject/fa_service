@@ -9,12 +9,6 @@
 make install
 ```
 
-# Building the containers
-
-```
-make build
-```
-
 # Tests
 
 Running the tests
