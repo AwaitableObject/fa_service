@@ -16,9 +16,14 @@ def in_memory_db() -> Engine:
 
 
 @pytest.fixture
-def session(
+def session_factory(
     in_memory_db: Engine,  # pylint: disable=W0621
-) -> Generator[Session, None, None]:
+) -> Generator[sessionmaker, None, None]:
     start_mappers()
-    yield sessionmaker(bind=in_memory_db)()
+    yield sessionmaker(bind=in_memory_db)
     clear_mappers()
+
+
+@pytest.fixture
+def session(session_factory: sessionmaker) -> Session:  # pylint: disable=W0621
+    return session_factory()
