@@ -1,18 +1,18 @@
 from abc import ABC, abstractmethod
-from typing import Any, List
+from typing import Any
 
 from sqlalchemy.orm.session import Session
 
-from app.domain.models import Batch
+from app.domain.models import Product
 
 
 class AbstractRepository(ABC):  # pragma: no cover
     @abstractmethod
-    def add(self, batch: Batch) -> None:
+    def add(self, product: Product) -> None:
         raise NotImplementedError
 
     @abstractmethod
-    def get(self, reference: str) -> Any:
+    def get(self, sku: str) -> Any:
         raise NotImplementedError
 
 
@@ -20,11 +20,8 @@ class SqlAlchemyRepository(AbstractRepository):
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def add(self, batch: Batch) -> None:
-        self.session.add(batch)
+    def add(self, product: Product) -> None:
+        self.session.add(product)
 
-    def get(self, reference: str) -> Batch:
-        return self.session.query(Batch).filter_by(reference=reference).one()
-
-    def list(self) -> List[Batch]:
-        return self.session.query(Batch).all()
+    def get(self, sku: str) -> Product | None:
+        return self.session.query(Product).filter_by(sku=sku).first()

@@ -35,11 +35,11 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
     def __init__(self, session_factory: sessionmaker = DEFAULT_SESSION_FACTORY) -> None:
         self.session_factory = session_factory
         self.session: Session
-        self.batches: SqlAlchemyRepository
+        self.products: SqlAlchemyRepository
 
     def __enter__(self) -> SqlAlchemyUnitOfWork:
         self.session = self.session_factory()
-        self.batches = SqlAlchemyRepository(self.session)
+        self.products = SqlAlchemyRepository(self.session)
 
         return self
 

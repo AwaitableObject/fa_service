@@ -1,14 +1,9 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from app.domain.exceptions import InvalidSku
-from app.domain.models import Batch, OrderLine
-from app.domain.models import allocate as model_allocation
+from app.domain.models import Batch, OrderLine, Product
 from app.service_layer.unit_or_work import SqlAlchemyUnitOfWork
-
-
-def is_valid_sku(sku: str, batches: List[Batch]) -> bool:
-    return sku in {batch.sku for batch in batches}
 
 
 def add_batch(
@@ -19,7 +14,13 @@ def add_batch(
     uow: SqlAlchemyUnitOfWork,
 ) -> None:
     with uow:
-        uow.batches.add(Batch(reference=reference, sku=sku, quantity=quantity, eta=eta))
+        product = uow.products.get(sku=sku)
+        if product is None:
+            product = Product(sku, batches=[])
+            uow.products.add(product)
+        product.batches.append(
+            Batch(reference=reference, sku=sku, quantity=quantity, eta=eta)
+        )
         uow.commit()
 
 
@@ -27,13 +28,11 @@ def allocate(order_id: str, sku: str, quantity: int, uow: SqlAlchemyUnitOfWork) 
     line = OrderLine(order_id=order_id, sku=sku, quantity=quantity)
 
     with uow:
-        batches = uow.batches.list()
-
-        if not is_valid_sku(line.sku, batches):
+        product = uow.products.get(sku=line.sku)
+        if product is None:
             raise InvalidSku(f"Invalid sku {line.sku}")
 
-        batchref = model_allocation(line, batches)
-
+        batchref = product.allocate(line)
         uow.commit()
 
     return batchref
