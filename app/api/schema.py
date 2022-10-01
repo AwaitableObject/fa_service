@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class OrdeLineScheme(BaseModel):
+class OrderLineSchema(BaseModel):
     order_id: str
     sku: str
     quantity: int

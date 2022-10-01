@@ -2,13 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from typing import List, Optional, Set
 
 from app.domain.exceptions import OutOfStock
 
 
 class Product:
-    def __init__(self, sku: str, batches: List[Batch], version_number: int = 0) -> None:
+    def __init__(self, sku: str, batches: list[Batch], version_number: int = 0) -> None:
         self.sku = sku
         self.batches = batches
         self.version_number = version_number
@@ -18,9 +17,10 @@ class Product:
             batch = next(b for b in sorted(self.batches) if b.can_allocate(line))
             batch.allocate(line)
             self.version_number += 1
+
             return batch.reference
-        except StopIteration as e:
-            raise OutOfStock(f"Out of stock for sku {line.sku}") from e
+        except StopIteration as exc:
+            raise OutOfStock(f"Out of stock for sku {line.sku}") from exc
 
 
 @dataclass(unsafe_hash=True)
@@ -32,14 +32,14 @@ class OrderLine:
 
 class Batch:
     def __init__(
-        self, reference: str, sku: str, quantity: int, eta: Optional[date] = None
+        self, reference: str, sku: str, quantity: int, eta: date | None = None
     ) -> None:
         self.reference: str = reference
         self.sku: str = sku
         self._purchased_quantity: int = quantity
-        self.eta: Optional[date] = eta
+        self.eta: date | None = eta
 
-        self._allocations: Set[OrderLine] = set()
+        self._allocations: set[OrderLine] = set()
 
     def __repr__(self) -> str:
         return f"<Batch {self.reference}>"

@@ -1,17 +1,19 @@
 from datetime import datetime
-from typing import Optional
+from typing import TYPE_CHECKING
 
 from app.domain.exceptions import InvalidSku
 from app.domain.models import Batch, OrderLine, Product
-from app.service_layer.unit_or_work import SqlAlchemyUnitOfWork
+
+if TYPE_CHECKING:
+    from app.service_layer.unit_or_work import SqlAlchemyUnitOfWork
 
 
 def add_batch(
     reference: str,
     sku: str,
     quantity: int,
-    eta: Optional[datetime],
-    uow: SqlAlchemyUnitOfWork,
+    eta: datetime | None,
+    uow: "SqlAlchemyUnitOfWork",
 ) -> None:
     with uow:
         product = uow.products.get(sku=sku)
@@ -24,7 +26,9 @@ def add_batch(
         uow.commit()
 
 
-def allocate(order_id: str, sku: str, quantity: int, uow: SqlAlchemyUnitOfWork) -> str:
+def allocate(
+    order_id: str, sku: str, quantity: int, uow: "SqlAlchemyUnitOfWork"
+) -> str:
     line = OrderLine(order_id=order_id, sku=sku, quantity=quantity)
 
     with uow:
